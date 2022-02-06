@@ -1,18 +1,17 @@
 import { useState } from "react";
 
 const Register = () => {
-
-  const[ firstName, setFirstName] = useState("");
-  const[ lastName, setLastName] = useState("");
-  const[ email, setEmail] = useState("");
-  const[ password, setPassword] = useState("");
-  const[ passwordRepeat, setPasswordRepeat] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordRepeat, setPasswordRepeat] = useState("");
 
   const registerUser = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
 
-    if (password === passwordRepeat) {      
-      event.preventDefault()
+    if (password === passwordRepeat) {
+      event.preventDefault();
       const response = await fetch("http://localhost:3001/api/register", {
         method: "POST",
         headers: {
@@ -25,18 +24,24 @@ const Register = () => {
           password,
         }),
       });
-  
+
       const data = await response.json();
-      console.log(data)
+      if (data.registered) {
+        alert("Account Created")
+        window.location.href = "/login"
+      } else {
+        alert("Register Failed. Email has been used")
+      }
+      console.log(data);
     } else {
-      alert("password not match")
+      alert("password not match");
     }
   };
 
   return (
     <div className="container">
       <div className="row justify-content-center">
-        <div className="col-8 my-5 p-5 border border-dark rounded">
+        <div className="col-8 my-5 p-3 border border-dark rounded">
           <form className="row" onSubmit={registerUser}>
             <div className="col-12 text-center">
               <h1>Register</h1>
@@ -96,10 +101,16 @@ const Register = () => {
                 placeholder="Password"
               />
             </div>
-            <input
-            className="btn btn-dark btn-block mx-3"
-            type={"submit"}
-            value="Register"/>
+            <button
+              className="btn btn-dark btn-block mx-3"
+              type={"submit"}
+              onClick={(e) => {
+                e.defaultPrevented();
+                window.location.href = "/login";
+              }}
+            >
+            Register
+            </button>
           </form>
         </div>
       </div>

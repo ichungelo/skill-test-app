@@ -9,7 +9,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const loginUser = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
     const response = await fetch("http://localhost:3001/api/login", {
       method: "POST",
       headers: {
@@ -22,14 +22,21 @@ const Login = () => {
     });
 
     const data = await response.json();
+    if (data.user) {
+      sessionStorage.setItem("token", data.user)
+      alert("Login Successfull");
+      window.location.href = "/dashboard";
+    } else {
+      alert("Please check yout email or password");
+    }
     console.log(data)
   };
 
   return (
     <div className="container">
       <div className="row justify-content-center">
-        <div className="col-4 my-5 p-5 border border-dark rounded">
-          <form className="row" onSubmit={loginUser}>
+        <div className="col-4 my-5 p-3 border border-dark rounded">
+          <form className="row my-3" onSubmit={loginUser}>
             <div className="col-12 text-center">
               <h1>Login</h1>
             </div>
@@ -62,7 +69,16 @@ const Login = () => {
             />
           </form>
           <div className="row">
-            <button className="btn btn-dark btn-block m-3">Register</button>
+            <label className="mx-3">Don't have an Account?</label>
+            <button
+              className="btn btn-dark btn-block mx-3 mb-3"
+              onClick={(e) => {
+                e.preventDefault()
+                window.location.href = "/register"
+              }}
+            >
+              Register
+            </button>
           </div>
           <GoogleLogin className="col-12" clientId={clientId} theme="dark" />
         </div>
