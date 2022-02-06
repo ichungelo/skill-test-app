@@ -3,6 +3,7 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 const User = require('./models/user.model')
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 
 const app = express()
 const port = 3001
@@ -16,11 +17,24 @@ app.get("/test", (req, res) => res.send("TEST OK"))
 
 app.post("/api/login", async (req, res) => {
     const user = await User.findOne({
-        email: req.body.email,
-        password: req.body.password
+        email: req.body.email
     })
 
-    (user) ? res.json({ status: "OK", user: true}) : res.json({ status: "ERROR", user: false })
+    const isValid = await bcrypt.compare(
+        req.body.password,
+        user.password
+    )
+
+    if(isValid) {
+        const token = jwt.sign({
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email
+        }, "SECRET CODE")
+        res.json({ status: "OK", user: token})
+    } else { 
+        res.json({ status: "ERROR", user: false })
+    }
 })
 
 app.post("/api/register", async (req, res) => {
