@@ -1,4 +1,3 @@
-import React from "react";
 import GoogleLogin from "react-google-login";
 import { useState } from "react";
 
@@ -58,7 +57,7 @@ const Login = () => {
             </div>
             <input
               className="btn btn-outline-dark btn-block mx-3"
-              type="submit"
+              type={"submit"}
               value="Login"
             />
           </form>
