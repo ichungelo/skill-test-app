@@ -4,6 +4,32 @@ import { useState } from "react";
 const Login = () => {
   const clientId =
     "990147833316-g96th8dg5076njvk3e8nsac345h7atr2.apps.googleusercontent.com";
+    
+  const handleSuccess = async (googleData) => {
+    const response = await fetch("http://localhost:3001/api/login-google", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token: googleData.tokenId
+      }),
+    })
+
+    const data = await response.json();
+    if (data.user) {
+      sessionStorage.setItem("token", data.user)
+      alert("Login Successfull");
+      window.location.href = "/dashboard";
+    } else {
+      alert("Please check yout email or password");
+    }
+    console.log(data);
+  };
+
+  const handleFailure = (failure) => {
+    console.log("Activate your browser cookie", failure);
+  };
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,13 +49,13 @@ const Login = () => {
 
     const data = await response.json();
     if (data.user) {
-      sessionStorage.setItem("token", data.user)
+      sessionStorage.setItem("token", data.user);
       alert("Login Successfull");
       window.location.href = "/dashboard";
     } else {
       alert("Please check yout email or password");
     }
-    console.log(data)
+    console.log(data);
   };
 
   return (
@@ -68,19 +94,24 @@ const Login = () => {
               value="Login"
             />
           </form>
-          <div className="row">
-            <label className="mx-3">Don't have an Account?</label>
-            <button
-              className="btn btn-dark btn-block mx-3 mb-3"
-              onClick={(e) => {
-                e.preventDefault()
-                window.location.href = "/register"
-              }}
-            >
-              Register
-            </button>
+          <hr />
+          <GoogleLogin
+            className="col-12"
+            clientId={clientId}
+            onSuccess={handleSuccess}
+            onFailure={handleFailure}
+            cookiePolicy={'single_host_origin'}
+            buttonText="Login with Google"
+            theme="dark"
+          />
+          <div className="text-center">
+            <p className="mx-3">
+              Don't have an Account?{" "}
+              <a href="/register" className="mb-1">
+                Register
+              </a>
+            </p>
           </div>
-          <GoogleLogin className="col-12" clientId={clientId} theme="dark" />
         </div>
       </div>
     </div>

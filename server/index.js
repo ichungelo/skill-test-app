@@ -4,9 +4,12 @@ const mongoose = require('mongoose')
 const User = require('./models/user.model')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const { OAuth2Client } = require('google-auth-library')
 
 const app = express()
 const port = 3001
+const clientId = "990147833316-g96th8dg5076njvk3e8nsac345h7atr2.apps.googleusercontent.com"
+const client = new OAuth2Client(clientId)
 
 mongoose.connect("mongodb://localhost:27017/skill-test-app")
 
@@ -14,6 +17,25 @@ app.use(cors())
 app.use(express.json())
 
 app.get("/test", (req, res) => res.send("TEST OK"))
+
+app.post("/api/login-google", async (req, res) => {
+    const { token } = req.body
+    const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: process.env.CLIENT_ID
+    })
+    const { email } = ticket.getPayload()
+
+    const tokenJwt = jwt.sign({
+        email: email
+    }, "SECRET CODE")
+    if (tokenJwt) {
+        res.json({ status: "OK", user: tokenJwt})
+    } else { 
+        res.json({ status: "ERROR", user: false })
+    }
+
+})
 
 app.post("/api/login", async (req, res) => {
     const user = await User.findOne({
@@ -27,8 +49,6 @@ app.post("/api/login", async (req, res) => {
 
     if(isValid) {
         const token = jwt.sign({
-            firstName: user.firstName,
-            lastName: user.lastName,
             email: user.email
         }, "SECRET CODE")
         res.json({ status: "OK", user: token})
