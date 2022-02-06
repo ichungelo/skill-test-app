@@ -12,7 +12,10 @@ const Login = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        token: googleData.tokenId
+        token: googleData.tokenId,
+        firstName: googleData.profileObj.givenName,
+        lastName: googleData.profileObj.familyName,
+        email: googleData.profileObj.email
       }),
     })
 
@@ -24,11 +27,10 @@ const Login = () => {
     } else {
       alert("Please check yout email or password");
     }
-    console.log(data);
   };
 
   const handleFailure = (failure) => {
-    console.log("Activate your browser cookie", failure);
+    alert("Activate your browser cookie", failure);
   };
 
   const [email, setEmail] = useState("");
@@ -55,7 +57,6 @@ const Login = () => {
     } else {
       alert("Please check yout email or password");
     }
-    console.log(data);
   };
 
   return (

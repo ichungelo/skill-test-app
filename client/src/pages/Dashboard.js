@@ -3,7 +3,9 @@ import { useHistory } from "react-router-dom";
 
 const Dashboard = () => {
   const history = useHistory();
-  let email = ""
+  let firstName = "";
+  let lastName = "";
+
 
   const token = sessionStorage.getItem("token");
   if (!token) {
@@ -11,13 +13,13 @@ const Dashboard = () => {
     history.replace("/login");
   } else {
     const user = jwtDecode(token)
-    console.log(user);
-    email = user.email
+    firstName = user.firstName
+    lastName = user.lastName
   }
 
   return (
     <div>
-      <h1 className="m-5 text-center">Welcome {email}</h1>
+      <h1 className="m-5 text-center">Welcome {firstName} {lastName}</h1>
     </div>
   );
 

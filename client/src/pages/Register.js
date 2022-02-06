@@ -30,9 +30,8 @@ const Register = () => {
         alert("Account Created")
         window.location.href = "/login"
       } else {
-        alert("Register Failed. Email has been used")
+        alert("Register Failed")
       }
-      console.log(data);
     } else {
       alert("password not match");
     }
@@ -52,6 +51,7 @@ const Register = () => {
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 type={"text"}
+                required
                 className="form-control form-control-sm"
                 name="firstName"
                 placeholder="First Name"
@@ -74,6 +74,7 @@ const Register = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 type={"email"}
+                required
                 className="form-control form-control-sm"
                 name="email"
                 placeholder="Email"
@@ -85,6 +86,8 @@ const Register = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 type={"password"}
+                required
+                minLength={8}
                 className="form-control form-control-sm"
                 name="password"
                 placeholder="Password"
@@ -96,6 +99,8 @@ const Register = () => {
                 value={passwordRepeat}
                 onChange={(e) => setPasswordRepeat(e.target.value)}
                 type={"password"}
+                required
+                minLength={8}
                 className="form-control form-control-sm"
                 name="passwordRepeat"
                 placeholder="Password"
