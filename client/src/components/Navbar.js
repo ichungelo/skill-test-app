@@ -1,3 +1,4 @@
+import jwtDecode from "jwt-decode";
 import React from "react";
 
 const Navbar = () => {
@@ -6,8 +7,24 @@ const Navbar = () => {
   let buttonBehaviour;
   if (token) {
     buttonText = "Logout";
-    buttonBehaviour = (e) => {
+    buttonBehaviour = async (e) => {
       e.preventDefault();
+      const tokenDecode = jwtDecode(token)
+      const response = await fetch("http://localhost:3001/api/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: tokenDecode.email
+        })
+      });
+      const data = await response.json();
+      if (data.success) {
+        alert("Logout Success")
+      } else {
+        alert("Logout Error")
+      }
       sessionStorage.clear("token");
       window.location.href = "/";
     };
