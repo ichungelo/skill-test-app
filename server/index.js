@@ -20,29 +20,27 @@ mongoose.connect("mongodb://localhost:27017/skill-test-app");
 app.use(cors());
 app.use(express.json());
 
-app.get("/test", (req, res) => res.send("TEST OK"));
-
 //REGISTER
 app.post("/api/register", async (req, res) => {
-    const hashPassword = await bcrypt.hash(req.body.password, 10);
-  
-    const isExistGoogle = await UserGoogle.findOne({ email: req.body.email });
-    const isExistUser = await User.findOne({ email: req.body.email });
-  
-    if (!isExistGoogle && !isExistUser) {
-      await User.create({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
-        password: hashPassword,
-        loginStatus: false,
-      });
-      res.json({ status: "OK", registered: true });
-    } else {
-      res.json({ status: "ERROR", registered: false });
-    }
-  });
-  
+  const hashPassword = await bcrypt.hash(req.body.password, 10);
+
+  const isExistGoogle = await UserGoogle.findOne({ email: req.body.email });
+  const isExistUser = await User.findOne({ email: req.body.email });
+
+  if (!isExistGoogle && !isExistUser) {
+    await User.create({
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      password: hashPassword,
+      loginStatus: false,
+    });
+    res.json({ status: "OK", registered: true });
+  } else {
+    res.json({ status: "ERROR", registered: false });
+  }
+});
+
 //LOGIN VIA GOOGLE
 app.post("/api/login-google", async (req, res) => {
   const ticket = await client.verifyIdToken({
@@ -106,23 +104,25 @@ app.post("/api/login", async (req, res) => {
 
 //LOGOUT
 app.post("/api/logout", async (req, res) => {
-    const logout = await User.findOne({
-        email: req.body.email
-    }) 
-    const logoutGoogle = await UserGoogle.findOne({
-        email: req.body.email
-    })
-    console.log(req.body.email)
+  const logout = await User.findOne({
+    email: req.body.email,
+  });
+  const logoutGoogle = await UserGoogle.findOne({
+    email: req.body.email,
+  });
 
-    if (logout) {
-        await User.updateOne({ email: req.body.email }, { loginStatus: false });
-        res.json({ status: "OK", success: true });
-    } else if (logoutGoogle) {
-        await UserGoogle.updateOne({ email: req.body.email }, { loginStatus: false });
-        res.json({ status: "OK", success: true });
-    } else {
-        res.json({ status: "ERROR", success: false });
-    }
-})
+  if (logout) {
+    await User.updateOne({ email: req.body.email }, { loginStatus: false });
+    res.json({ status: "OK", success: true });
+  } else if (logoutGoogle) {
+    await UserGoogle.updateOne(
+      { email: req.body.email },
+      { loginStatus: false }
+    );
+    res.json({ status: "OK", success: true });
+  } else {
+    res.json({ status: "ERROR", success: false });
+  }
+});
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
